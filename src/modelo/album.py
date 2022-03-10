@@ -11,7 +11,6 @@ class Medio(enum.Enum):
     CASETE = 2
     CD = 3
 
-""" Clase album"""
 class Album(Base):
     __tablename__ = 'album'
 
