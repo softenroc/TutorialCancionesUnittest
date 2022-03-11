@@ -1,4 +1,4 @@
-name: Automerge
+name: Validacion de pull request y merge release a main
 on:
   pull_request:
     types:
@@ -13,8 +13,8 @@ on:
     branches: [ main ]
 jobs:
   job1:
-    name: Pruebas
-    runs-on: ubuntu-latest
+    name: Pruebas Unitarias
+    runs-on: Ubuntu-20.04
     steps:
     - name: Checkout de repositorio
       uses: actions/checkout@v2
@@ -26,16 +26,26 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Correr pruebas
-      id: correr-pruebas
-      run: python -m unittest -v tests/test_persona.py
-    - name: Cálculo de cubrimiento
+    - name: Lanzas todas las pruebas unitarias
+      id: lanzar-pruebas-unitarias
+      run: python -m unittest -v tests/*.py
+    - name: Validar resultado si las pruebas tienen errores
+      if: ${{ failure() }}
+      env:
+        MENSAJE_ERROR: Una o varias pruebas fallaron por favor verifiquelas
+      run: echo "::set-output name=respuesta::${MENSAJE_ERROR}"
+    - name: Validar resultado si las pruebas no tienen errores
+      if: ${{ success() }}
+      env:
+        MENSAJE_EXITO: Felicitaciones! La ejecucion de todas las pruebas unitarias fueron exitosas
+      run: echo "::set-output name=respuesta::${MENSAJE_EXITO}"
+    - name: Calcular de cubrimiento de las pruebas unitarias
       id: cubrimiento
       run: |
-          coverage run -m unittest tests/test_persona.py
+          coverage run -m unittest tests/*.py
           coverage report -m
   automerge:
-    name: Automerge
+    name: Crear rama release y
     needs: job1
     runs-on: ubuntu-latest
     steps:
