@@ -7,6 +7,7 @@ from src.modelo.declarative_base import Session
 from faker import Faker
 
 
+"""Album test"""
 class AlbumTestCase(unittest.TestCase):
 
     def setUp(self):
