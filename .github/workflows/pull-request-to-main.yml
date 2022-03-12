@@ -2,7 +2,7 @@ name: Validacion de creacion de release y cierre a main
 on:
   push:
     branches:
-      - 'develop'
+      - 'feature/**'
 jobs:
   validar_commit:
     name: Validar si en commit viene palabra clave para creacion de release
