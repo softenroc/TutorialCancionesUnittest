@@ -44,16 +44,16 @@ jobs:
     steps:
       - name: Crear rama
         run: |
-        git checkout -b release
-        git push -f -u origin release
+          git checkout -b release/${{ github.ref }}
+          git push -f -u origin release/${{ github.ref }}
       - name: Mezcla release -> main
         uses: tukasz/direct-merge-action@master
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          source-branch: release
+          source-branch: release/${{ github.ref }}
           target-branch: main
       - name: Eliminar rama release
         uses: dawidd6/action-delete-branch@v3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          branches: release
+          branches: release/${{ github.ref }}
