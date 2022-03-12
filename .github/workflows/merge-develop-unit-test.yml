@@ -37,3 +37,14 @@ jobs:
       run: |
           coverage run -m unittest tests/*.py
           coverage report -m
+  merge_develop:
+    name: Crear rama release y
+    needs: validar_commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mezcla feature -> develop
+        uses: tukasz/direct-merge-action@master
+        with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        source-branch: ${{ github.ref }}
+        target-branch: develop
