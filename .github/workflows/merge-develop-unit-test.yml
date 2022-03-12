@@ -48,6 +48,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           source-branch: ${{ github.ref }}
           target-branch: develop
-      - name: Cerrar rama feature
-        run: |
-          git branch -D ${{ github.ref }}
+      - name: Eliminar rama feature
+        uses: dawidd6/action-delete-branch@v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          branches: ${{ github.ref }}
+          suffix: -done
