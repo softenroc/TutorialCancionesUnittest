@@ -49,5 +49,5 @@ jobs:
           source-branch: ${{ github.ref }}
           target-branch: develop
       - name: Cerrar rama feature
-         run: |
-         git branch -D ${{ github.ref }}
+          run: |
+            git branch -D ${{ github.ref }}
