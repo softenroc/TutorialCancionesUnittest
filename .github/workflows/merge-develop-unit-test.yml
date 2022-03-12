@@ -1,10 +1,12 @@
-name: Verificacion de pruebas cuando se hace merge a develop
+name: Validacion de cierre de feature a develop
 on:
   push:
-    branches: [ develop ]
+    branches:
+      - 'feature/**'
 jobs:
-  pruebas:
-    name: Pruebas Unitarias
+  validar_commit:
+    name: Validar si en commit viene palabra clave para cierre de feature
+    if: ${{ contains(github.event.head_commit.message, 'FEATURE') }}
     runs-on: Ubuntu-20.04
     steps:
     - name: Checkout de repositorio
