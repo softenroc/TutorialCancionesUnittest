@@ -48,8 +48,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           source-branch: ${{ github.ref }}
           target-branch: develop
-      - name: Eliminar rama feature
+      - name: Extraer nombre de la raam
         run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/})"
+      - name: Eliminar rama feature
         uses: dawidd6/action-delete-branch@v3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
