@@ -38,7 +38,7 @@ jobs:
           coverage run -m unittest tests/*.py
           coverage report -m
   merge_develop:
-    name: Crear rama release y
+    name: Merge de la feature a develop
     needs: validar_commit
     runs-on: ubuntu-latest
     steps:
