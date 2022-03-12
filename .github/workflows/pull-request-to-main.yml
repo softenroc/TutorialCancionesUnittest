@@ -42,6 +42,8 @@ jobs:
     needs: validar_commit
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout de repositorio
+        uses: actions/checkout@v2
       - name: Crear rama
         run: |
           git checkout -b release
