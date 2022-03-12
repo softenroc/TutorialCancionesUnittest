@@ -54,4 +54,4 @@ jobs:
         uses: dawidd6/action-delete-branch@v3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          branches: ${{BRANCH_NAME}}
+          branches: $BRANCH_NAME
