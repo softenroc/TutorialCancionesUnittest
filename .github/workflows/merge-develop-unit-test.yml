@@ -53,4 +53,3 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           branches: ${{ github.ref }}
-          suffix: -done
