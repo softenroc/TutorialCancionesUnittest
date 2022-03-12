@@ -1,56 +1,54 @@
-name: Validacion de pull request y merge release a main
+name: Validacion de creacion de release y cierre a main
 on:
-  pull_request:
-    types:
-      - labeled
-      - unlabeled
-      - synchronize
-      - opened
-      - edited
-      - ready_for_review
-      - reopened
-      - unlocked
-    branches: [ main ]
+  push:
+    branches:
+      - 'develop'
 jobs:
-  job1:
-    name: Pruebas Unitarias
+  validar_commit:
+    name: Validar si en commit viene palabra clave para creacion de release
+    if: ${{ contains(github.event.head_commit.message, 'RELEASE') }}
     runs-on: Ubuntu-20.04
     steps:
-    - name: Checkout de repositorio
-      uses: actions/checkout@v2
-    - name: Configuración de entorno de python
-      uses: actions/setup-python@v2
-      with:
+      - name: Checkout de repositorio
+        uses: actions/checkout@v2
+      - name: Configuración de entorno de python
+        uses: actions/setup-python@v2
+        with:
           python-version: '3.7'
-    - name: Instalación de librerías y dependencias
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Lanzas todas las pruebas unitarias
-      id: lanzar-pruebas-unitarias
-      run: python -m unittest -v tests/*.py
-    - name: Validar resultado si las pruebas tienen errores
-      if: ${{ failure() }}
-      env:
-        MENSAJE_ERROR: Una o varias pruebas fallaron por favor verifiquelas
-      run: echo "::set-output name=respuesta::${MENSAJE_ERROR}"
-    - name: Validar resultado si las pruebas no tienen errores
-      if: ${{ success() }}
-      env:
-        MENSAJE_EXITO: Felicitaciones! La ejecucion de todas las pruebas unitarias fueron exitosas
-      run: echo "::set-output name=respuesta::${MENSAJE_EXITO}"
-    - name: Calcular de cubrimiento de las pruebas unitarias
-      id: cubrimiento
-      run: |
+      - name: Instalación de librerías y dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Lanzas todas las pruebas unitarias
+        id: lanzar-pruebas-unitarias
+        run: python -m unittest -v tests/*.py
+      - name: Validar resultado si las pruebas tienen errores
+        if: ${{ failure() }}
+        env:
+          MENSAJE_ERROR: Una o varias pruebas fallaron por favor verifiquelas
+        run: echo "::set-output name=respuesta::${MENSAJE_ERROR}"
+      - name: Validar resultado si las pruebas no tienen errores
+        if: ${{ success() }}
+        env:
+          MENSAJE_EXITO: Felicitaciones! La ejecucion de todas las pruebas unitarias fueron exitosas
+        run: echo "::set-output name=respuesta::${MENSAJE_EXITO}"
+      - name: Calcular de cubrimiento de las pruebas unitarias
+        id: cubrimiento
+        run: |
           coverage run -m unittest tests/*.py
           coverage report -m
-  automerge:
-    name: Crear rama release y
-    needs: job1
+  crear_release:
+    name: Crear rama releaase
+    needs: validar_commit
     runs-on: ubuntu-latest
     steps:
-      - name: automerge
-        uses: "pascalgn/automerge-action@4536e8847eb62fe2f0ee52c8fa92d17aa97f932f"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_LABELS: ""
+      - name: Crear rama
+        run: |
+        git checkout -b release/${{ github.ref }}
+        git push -f -u origin release/${{ github.ref }}
+      - name: Mezcla release -> main
+        uses: tukasz/direct-merge-action@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          source-branch: release/${{ github.ref }}
+          target-branch: main
